@@ -1,0 +1,19 @@
+###Test-Port Function
+function Test-Port {
+  Param(
+  [string]$cn,
+  [int]$port
+  )
+  $ErrorActionPreference = “SilentlyContinue”
+  $socket = new-object Net.Sockets.TcpClient
+  $socket.Connect($cn, $port)
+  if ($socket.Connected) {
+    write-output ""
+    write-output "Port $port is open on $cn"
+    $socket.Close()
+  }
+  else {
+   write-output "Port $port is not opened, open Windows Firewall with Advanced features to open the port"
+  }
+  $socket = $null
+}
