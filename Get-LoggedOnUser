@@ -1,0 +1,13 @@
+###Get-LoggedOnUser Function
+Function Get-LoggedOnUser{
+  Param(
+  [string]$cn
+  )
+Get-WMIObject Win32_Process -filter 'name="explorer.exe"' -computername $cn | 
+ForEach-Object { 
+write-host ""
+$owner = $_.GetOwner(); '{0}\{1}' -f $owner.Domain, $owner.User 
+write-host ""
+} |	Sort-Object | Get-Unique
+
+}
