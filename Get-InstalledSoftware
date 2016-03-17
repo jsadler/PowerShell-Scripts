@@ -1,0 +1,16 @@
+###Get-InstalledSoftware
+function Get-InstalledSoftware {
+[cmdletbinding()]
+Param(
+[string]$cn
+)
+
+foreach ($i in $cn) {
+
+Write-host ""
+Write-host ""
+Write-host ""
+write-host $cn
+Invoke-command -computer $cn {Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |  Select-Object DisplayName, DisplayVersion, Publisher, InstallDate}
+}
+}
