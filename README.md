@@ -14,4 +14,4 @@ Test-Port
 
 Get-InstalledSoftware
 ################
-  -Pulls installed software via registry on a local or remote machine
+  -Pulls installed software via registry on a local or remote machine 
