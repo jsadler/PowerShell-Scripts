@@ -1,0 +1,43 @@
+##########
+##
+##Create GUI
+##
+##########
+ 	[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+###Build Form
+ 	$Form = New-Object System.Windows.Forms.Form
+    	$Form.Text = "Sadler Sample Form"
+    	$Form.Width = 500
+    	$Form.Height = 200
+    	$Form.AutoSizeMode = "GrowAndShrink"
+    	$Form.StartPosition = "CenterScreen"
+###Build Label
+ 	$Label = New-Object System.Windows.Forms.Label
+    	$Label.text = "Type Yo' Shit"
+    	$Label.Font = New-Object System.Drawing.Font("Calibri",30)
+    	$Label.AutoSize = $true
+    	$label.Left = 110
+    	$label.Top = 10
+###Build Button
+ 	$button = new-object System.Windows.Forms.Button
+    	$button.left = 335
+    	$button.Top = 98
+    	$button.width = 100
+    	$button.Text = "OK"
+    	$button.Add_Click({$textbox.text,$form.Close()})
+###Use Enter/Esc key
+ 	$Form.KeyPreview = $True
+ 	$Form.Add_KeyDown({if ($_.KeyCode -eq "Enter")
+ 	{$textBox.Text,$objForm.Close()}})
+ 	$Form.Add_KeyDown({if ($_.KeyCode -eq "Escape")
+ 	{$Form.Close()}})
+###Build Text Box
+ 	$textBox = New-Object System.Windows.Forms.TextBox
+    	$textBox.left = 125
+    	$textBox.Top = 100
+    	$textBox.width = 200
+###Add Controls to Form
+ 	$Form.Controls.add($button)
+ 	$Form.Controls.add($textBox)
+ 	$form.controls.add($label)
+ 	[void] $Form.ShowDialog()
