@@ -1,3 +1,11 @@
-###Create popup window
+###Create popup window Using ComObject
 $Popup = new-object -ComObject wscript.shell
 $Popup.popup("This is the pop up body`n`n", 0, "This is the pop up title", 49)
+
+###Create popup window using .net framework
+Add-Type -AssemblyName PresentationCore,PresentationFramework
+$ButtonType = [System.Windows.MessageBoxButton]::Ok
+$MessageboxTitle = “Message From: 561st Network Operations Squadron”
+$Messageboxbody = “Microsoft Office 2013 installation is now in progress, please do not use the software until the installation is complete!”
+$MessageIcon = [System.Windows.MessageBoxImage]::Warning
+[System.Windows.MessageBox]::Show($Messageboxbody,$MessageboxTitle,$ButtonType,$messageicon)
