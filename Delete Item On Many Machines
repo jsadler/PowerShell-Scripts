@@ -1,0 +1,15 @@
+$machines = Get-Content 'C:\users\Username\Desktop\machines.txt'
+
+foreach ($machine in $machines){
+if (test-path "\\$machine\c$\users\Username"){
+          try{
+          remove-item -Path "\\$machine\C$\users\1386764600A\Desktop\test\*" -Exclude "dont_delete_me.txt"
+             }
+          catch{
+             write-host "$machine caught an error while deleting file" -ForegroundColor Red
+             }
+          }
+else{
+write-host "Path/file does not exist on $machine or might not be turned on" -ForegroundColor Red
+    }
+}
