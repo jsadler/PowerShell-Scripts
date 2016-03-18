@@ -1,0 +1,17 @@
+###Creating PS Profile
+######################
+
+  #Run the following commands to test $profile path and create profile if one doesn't exist
+  #########################################################################################
+Test-path $profile
+New-Item -path $profile -type file -force
+invoke-item C:\users\yourusername\Documents\WindowsPowerShell\Microsoft.PowerShellISE_profile.ps1
+  
+  #Once text file opens paste these commands
+  #########################################
+set-location c:\Windows\System32\WindowsPowerShell\v1.0\Modules\DCOModule
+new-item alias:DCO -value c:\Windows\System32\WindowsPowerShell\v1.0\Modules\DCOModule\DCOModule.psm1
+new-item alias:mmc -value C:\Windows\System32\mmc.exe
+new-item alias:ad -value C:\Windows\System32\dsa.msc
+$host.ui.rawui.windowtitle = "Sadler's Sicky Sicky Gnar Gnar PowerShell Window"
+clear-host
