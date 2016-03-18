@@ -1,0 +1,5 @@
+###Text to speech script
+$words = read-host "Type what you want spoken here, then press enter"
+add-type -AssemblyName system.speech
+$say = New-Object -TypeName system.speech.synthesis.speechsynthesizer
+$say.speak($words)
