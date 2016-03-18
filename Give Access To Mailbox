@@ -1,3 +1,4 @@
 #Give access to mailbox
 ########################
+#Needs to be ran via Exchange Shell
 Add-MailboxPermission -identity “SomeUser@email.com” -user “YourEmail@email.com” -accessRights FullAccess
