@@ -1,0 +1,6 @@
+function Get-LastLogOn{
+param(
+$ComputerName
+)
+Get-WmiObject -Class win32_userprofile -filter "NOT SID = 'S-1-5-18' AND NOT SID = 'S-1-5-19' AND NOT SID = 'S-1-5-20'" -computername $computername | sort lastusetime -Descending | select -First 1 | select localpath
+}
