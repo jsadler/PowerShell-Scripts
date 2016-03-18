@@ -1,0 +1,3 @@
+###Create popup window
+$Popup = new-object -ComObject wscript.shell
+$Popup.popup("This is the pop up body`n`n", 0, "This is the pop up title", 49)
