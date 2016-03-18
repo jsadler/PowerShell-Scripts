@@ -1,0 +1,3 @@
+#Give access to mailbox
+########################
+Add-MailboxPermission -identity “SomeUser@email.com” -user “YourEmail@email.com” -accessRights FullAccess
