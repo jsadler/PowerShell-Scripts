@@ -1,0 +1,52 @@
+$strComputers = get-content C:\Users\username\Desktop\computers.txt
+
+foreach ($strComputer in $strComputers) {
+    
+    if((Test-Connection -Cn $strComputer -BufferSize 16 -Count 1 -ea 0 -quiet)){
+        
+        try
+        {
+            $colItems = Get-WmiObject -Class "WIN32_BIOS" -Namespace "root\CIMV2" -ComputerName $strComputer -ErrorAction Stop
+        
+        }
+        catch
+        {
+           write $strComputer "caught an exception, Exception Message: $($_.Exception.Message)`n" -ForegroundColor Red | out-file -filepath C:\users\1386764600.adm\Desktop\Exceptions.txt -Append
+        }
+
+        foreach ($objItem in $colItems) {
+            New-Object PSObject -Property @{
+            Computer = $strComputer
+            BIOS_Characteristics = $objItem.BiosCharacteristics 
+            BIOS_Version = $objItem.BIOSVersion 
+            Build_Number = $objItem.BuildNumber 
+            Caption = $objItem.Caption 
+            Code_Set = $objItem.CodeSet 
+            Current_Language = $objItem.CurrentLanguage 
+            Description = $objItem.Description 
+            Identification_Code = $objItem.IdentificationCode 
+            Installable_Languages = $objItem.InstallableLanguages 
+            Installation_Date = $objItem.InstallDate 
+            Language_Edition = $objItem.LanguageEdition 
+            List_Of_Languages = $objItem.ListOfLanguages 
+            Manufacturer = $objItem.Manufacturer 
+            Name = $objItem.Name 
+            Other_Target_Operating_System = $objItem.OtherTargetOS 
+            Primary_Bios = $objItem.PrimaryBIOS 
+            Release_Date = $objItem.ReleaseDate 
+            Serial_Number = $objItem.SerialNumber 
+            SMBIOS_BIOS_Version = $objItem.SMBIOSBIOSVersion 
+            SMBIOS_Major_Version = $objItem.SMBIOSMajorVersion 
+            SMBIOS_Minor_Version = $objItem.SMBIOSMinorVersion 
+            SMBIOS_Present = $objItem.SMBIOSPresent 
+            Software_Element_ID = $objItem.SoftwareElementID 
+            Software_Element_State = $objItem.SoftwareElementState 
+            Status = $objItem.Status 
+            Target_Operating_System = $objItem.TargetOperatingSystem 
+            Version = $objItem.Version      } | out-file -FilePath C:\users\1386764600.adm\Desktop\WorkingBIOS.txt -Append
+        }
+    }else{
+        write "$strComputer may be off, check DNS or if computer is turned off`n" | out-file -FilePath C:\users\username\Desktop\NoConnection.txt -Append
+        continue
+    }
+}
