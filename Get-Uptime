@@ -1,4 +1,14 @@
 function Get-Uptime {
+<#
+.SYNOPSIS
+    Displays system uptime
+.DESCRIPTION
+    This function uses the 'systeminfo' command to pull hostname and system boot time.  
+.EXAMPLE
+    Get-Uptime -ComputerName <ComputerName>
+.EXAMPLE
+    Get-Uptime -CN <ComputerName>
+#>
 [CmdletBinding()]
 
 param(
