@@ -11,7 +11,7 @@ foreach ($strComputer in $strComputers) {
         }
         catch
         {
-           write $strComputer "caught an exception, Exception Message: $($_.Exception.Message)`n" -ForegroundColor Red | out-file -filepath C:\users\1386764600.adm\Desktop\Exceptions.txt -Append
+           write $strComputer "caught an exception, Exception Message: $($_.Exception.Message)`n" -ForegroundColor Red | out-file -filepath C:\users\username\Desktop\Exceptions.txt -Append
         }
 
         foreach ($objItem in $colItems) {
