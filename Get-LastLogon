@@ -1,7 +1,22 @@
 function Get-LastLogOn{
+<#
+.SYNOPSIS
+  Shows last user to logon to a machine
+.DESCRIPTION
+  This function queries the local C:\users\ directory and displays the user profile that most recently edited.
+.EXAMPLE
+  Get-LastLogOn -ComputerName <ComputerName>
+.EXAMPLE
+  Get-LastLogOn -CN <ComputerName
+#>
+
 [cmdletbinding()]
 param(
-$ComputerName
+    [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+               [alias("CN")]
+               $ComputerName
 )
 Get-WmiObject -Class win32_userprofile -filter "NOT SID = 'S-1-5-18' AND NOT SID = 'S-1-5-19' AND NOT SID = 'S-1-5-20'" -computername $computername | sort lastusetime -Descending | select -First 1 | select localpath
 }
