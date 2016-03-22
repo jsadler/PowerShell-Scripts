@@ -1,7 +1,21 @@
-###Get-UserProfiles function
 Function Get-UserProfiles{
+<#
+.SYNOPSIS
+    Pulls all user profiles on a machine  
+.DESCRIPTION
+    This function queries the C:\users\ directory on whichever machine you specify and gives you a user friendly output.
+.EXAMPLE
+    Get-UserProfiles -CN <ComputerName>
+.EXAMPLE
+    Get-UserProfiles -ComputerName <ComputerName>
+    
+#>
   Param(
-  [string]$ComputerName
+      [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+               [alias('cn')]
+               $ComputerName
   )
 $ErrorActionPreference = "silentlycontinue"
 $accounts = Get-ChildItem \\$ComputerName\C$\users | ForEach-Object { $_.Name } 
