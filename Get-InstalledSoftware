@@ -1,15 +1,27 @@
-###Get-InstalledSoftware
 function Get-InstalledSoftware {
+<#
+.Synopsis
+   Pulls installed software on a machine by querying the registry  
+.DESCRIPTION
+   Function opens a connection to whichever machine you specify in the $computername variable
+   and queries the registry for all installed software withing the HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\ directory.
+.EXAMPLE
+   Get-InstalledSoftware -ComputerName <ComputerName>
+.EXAMPLE
+   Get-InstalledSoftware -CN <ComputerName>
+#>
 [cmdletbinding()]
 Param(
-[string]$cn
-)
+    [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+    [alias('ComputerName')]
+    $cn
+     )
 
 foreach ($i in $cn) {
 
-Write-host ""
-Write-host ""
-Write-host ""
+
 write-host $cn
 Invoke-command -computer $cn {Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |  Select-Object DisplayName, DisplayVersion, Publisher, InstallDate}
 }
