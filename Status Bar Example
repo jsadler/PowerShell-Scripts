@@ -1,0 +1,29 @@
+<#
+.Synopsis
+   Quick template to add a status bar to a PowerShell script
+.DESCRIPTION
+   To break down the sample, here is how to add the Write-Progress feature into a script:
+   Create your collection: $comms = Get-Command
+   Clear your counter: $I = 0
+   Loop through the collection: ForEach ($comm in $comms) {
+   Increment your counter: $I++
+   Write your output as per usual: Write-Host $comm
+   Write your progress bar (see below)
+   End your loop: }
+.EXAMPLE
+   Example is shown below
+#>
+
+$comms = Get-ADComputer -Filter *
+
+$i=0
+
+ForEach ($comm in $comms) {
+
+$i++
+
+Write-Host $comm.Name
+
+Write-Progress -activity “Searching...” -status “Status: ” -PercentComplete (($i / $comms.count)*100)
+
+}
