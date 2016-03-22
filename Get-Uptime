@@ -5,7 +5,8 @@ param(
     [parameter(Mandatory = $true,
                ValueFromPipelineByPropertyName=$true,
                Position = 0)]
-    [string]$ComputerName    
+               [alias('cn')]
+               $ComputerName    
     )
 Write-Host -ForegroundColor Green  "╔════════════════════════════════════════════════════════════╗"
 Write-Host -ForegroundColor Green  "║                       Please Wait...                       ║"
@@ -15,6 +16,7 @@ systeminfo /s $ComputerName
 )
 Clear-host
 write-host ""
-$array[1]
-$array[11]
+write-host $array[1] -ForegroundColor Green
+write-host $array[11] -ForegroundColor Green
+write-host ""
 }
