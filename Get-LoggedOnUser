@@ -1,7 +1,21 @@
-###Get-LoggedOnUser Function
 Function Get-LoggedOnUser{
+<#
+.SYNOPSIS
+    Get username of currently logged on user  
+.DESCRIPTION
+    This function queries whichever machine you specify for an active "explorer.exe" process and prints both their domain and username
+    **NOTE: If no one is currently logged on it will return nothing.**
+.EXAMPLE
+    Get-LoggedOnUser -ComputerName <ComputerName>
+.EXAMPLE
+    Get-LoggedOnUser -CN <ComputerName>
+#>
   Param(
-  [string]$cn
+    [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+               [alias("ComputerName")]
+               $CN
   )
 Get-WMIObject Win32_Process -filter 'name="explorer.exe"' -computername $cn | 
 ForEach-Object { 
