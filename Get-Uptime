@@ -1,0 +1,20 @@
+function Get-Uptime {
+[CmdletBinding()]
+
+param(
+    [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+    [string]$ComputerName    
+    )
+Write-Host -ForegroundColor Green  "╔════════════════════════════════════════════════════════════╗"
+Write-Host -ForegroundColor Green  "║                       Please Wait...                       ║"
+Write-Host -ForegroundColor Green  "╚════════════════════════════════════════════════════════════╝"
+$array = @(
+systeminfo /s $ComputerName
+)
+Clear-host
+write-host ""
+$array[1]
+$array[11]
+}
