@@ -43,7 +43,7 @@ foreach ($strComputer in $strComputers) {
             Software_Element_State = $objItem.SoftwareElementState 
             Status = $objItem.Status 
             Target_Operating_System = $objItem.TargetOperatingSystem 
-            Version = $objItem.Version      } | out-file -FilePath C:\users\1386764600.adm\Desktop\WorkingBIOS.txt -Append
+            Version = $objItem.Version      } | out-file -FilePath C:\users\username\Desktop\WorkingBIOS.txt -Append
         }
     }else{
         write "$strComputer may be off, check DNS or if computer is turned off`n" | out-file -FilePath C:\users\username\Desktop\NoConnection.txt -Append
