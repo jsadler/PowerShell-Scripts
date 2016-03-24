@@ -1,0 +1,16 @@
+
+<# 
+  .SYNOPSIS  
+    Remotely connect to Exchange Management Shell
+  .DESCRIPTION
+    These commands allow you to remotely connect to a mail server's Exchange Management Shell giving you EMS commands
+    on your local box.  Must have messaging/exchange rights to run.  Be sure to Remove-PSSession once you are finished
+  .EXAMPLE 
+    Example shown below
+#> 
+$userCredential = Get-Credential
+$session = New-PSSession -ConfigurationName microsoft.exchange -connectionuri http://<MailServerName>/powershell/ -Authentication Kerberos -Credential $usercredential
+Import-PSSession $session
+
+#End Session once complete
+#Remove-PSSession $Session
