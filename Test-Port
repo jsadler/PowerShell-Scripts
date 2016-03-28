@@ -1,4 +1,14 @@
-###Test-Port Function
+<#
+.Synopsis
+  Function that verifies if a port is opened or closed on a machine
+.DESCRIPTION
+  Used to check whether or not a port that you specify is opened or closed on a machine that you specify 
+.EXAMPLE
+  Test-Port -cn <ComputerName> -Port <PortNumber>
+.EXAMPLE
+  Test-port -cn TEST-DC-001 -Port 443
+
+#>
 function Test-Port {
   Param(
   [string]$cn,
