@@ -1,3 +1,13 @@
+<#
+.Synopsis
+   Remotely pulls BIOS information
+.DESCRIPTION
+    Test connection of machines in $StrComputers Variable, then pulls BIOS information remotely via the WMI.
+.NOTE
+    You can comment out BIOS information you don't want to see with a '#' sign.
+   
+#>
+
 $strComputers = get-content C:\Users\username\Desktop\computers.txt
 
 foreach ($strComputer in $strComputers) {
