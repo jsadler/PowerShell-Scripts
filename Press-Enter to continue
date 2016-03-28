@@ -1,3 +1,11 @@
+<#
+.Synopsis
+   Functions that adds "Press Enter Key to Continue" to a script
+.DESCRIPTION
+   Gives you the ability to add "Press Enter Key to Continue" anywhere in your script
+   
+#>
+
 function Press-Enter{
    read-Host 'Press Enter to continue' | Out-Null
 }
