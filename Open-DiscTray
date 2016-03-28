@@ -1,3 +1,16 @@
+<#
+.Synopsis
+   Opens/Closes disc tray on machine
+.DESCRIPTION
+   Opens/Closes disc tray on machine
+.EXAMPLE
+   Open-DiscTray -Eject
+.EXAMPLE
+   Open-DiscTray -Close
+.NOTE
+   Can be used on remote machine via invoke-command.  Great for fucking with Tyler.
+#>
+
 function Open-DiscTray {
 [CmdletBinding()]            
 param(            
