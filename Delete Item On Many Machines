@@ -1,9 +1,21 @@
+<#
+.Synopsis
+   Search and destroy files on remote machines
+.DESCRIPTION
+   Searches whichever machines you specify in the $machines variable and first, test's the path to verify it exists, then 
+   deletes the folder or path you specify on each.  Can also exclude certain files using the -exclude switch.
+.NOTE
+   You must edit the $machines variable as well as all the path's that it searches for.  To exclude a certian file use the -exclude
+   switch.
+   
+#>
+
 $machines = Get-Content 'C:\users\Username\Desktop\machines.txt'
 
 foreach ($machine in $machines){
 if (test-path "\\$machine\c$\users\Username"){
           try{
-          remove-item -Path "\\$machine\C$\users\1386764600A\Desktop\test\*" -Exclude "dont_delete_me.txt"
+          remove-item -Path "\\$machine\C$\users\username\Desktop\test\*" -Exclude "dont_delete_me.txt"
              }
           catch{
              write-host "$machine caught an error while deleting file" -ForegroundColor Red
