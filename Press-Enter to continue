@@ -1,0 +1,3 @@
+function Press-Enter{
+   read-Host 'Press Enter to continue' | Out-Null
+}
