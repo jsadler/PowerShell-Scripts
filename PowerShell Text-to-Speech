@@ -1,4 +1,10 @@
-###Text to speech script
+<#
+.Synopsis
+   Quick script that activates text-to-speech on machine
+.DESCRIPTION
+   Script that activates text-to-speech via Windows .NET Framework
+#>
+
 $words = read-host "Type what you want spoken here, then press enter"
 add-type -AssemblyName system.speech
 $say = New-Object -TypeName system.speech.synthesis.speechsynthesizer
