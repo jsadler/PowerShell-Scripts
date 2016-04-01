@@ -12,10 +12,17 @@
 
 $users = get-content "C:\users\username\Desktop\Stuff.txt"
 
+#This sets the $i variable to zero for status bar usage
 $i = 0
+
 foreach ($user in $users){
-$i++
-Set-ADAccountControl $user -Enabled $false
-Set-ADUser $user -Description "Do not re-enable without authorization."
-Write-Progress -Activity "Locking out user accounts" -Status "Current Status" -PercentComplete (($i / $users.count)*100)
+    #Counter for the status bar
+    $i++
+    
+    #Add changes you want done to all the user accounts here.
+    Set-ADAccountControl $user -Enabled $false
+    Set-ADUser $user -Description "Do not re-enable without authorization."
+    
+    #Creates status bar
+    Write-Progress -Activity "Locking out user accounts" -Status "Current Status" -PercentComplete (($i / $users.count)*100)
 }
