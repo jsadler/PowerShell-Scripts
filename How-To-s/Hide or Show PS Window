@@ -1,0 +1,25 @@
+<#
+.SYNOPSIS
+  Functions to either show or hide PowerShell Window
+.DESCRIPTION
+  This is a bit of C# code turned into PowerShell functions.  Once you run this you can type Hide-PowerShell to run the PowerShell
+  process in the background or Show-PowerShell to bring the PowerShell process back to the foreground.  This is a great addition
+  to Windows Forms and PowerShell GUIs to keep the PowerShell Window hidden.
+.EXAMPLE
+  Hide-PowerShell
+  Sleep -Seconds 5
+  Show-PowerShell
+#>
+   
+    $script:showWindowAsync = Add-Type –memberDefinition @”
+    [DllImport("user32.dll")]
+    public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+    “@ -name “Win32ShowWindowAsync” -namespace Win32Functions –passThru
+
+    function Show-PowerShell() {
+         $null = $showWindowAsync::ShowWindowAsync((Get-Process –id $pid).MainWindowHandle, 10)
+    }
+
+    function Hide-PowerShell() {
+        $null = $showWindowAsync::ShowWindowAsync((Get-Process –id $pid).MainWindowHandle, 2)
+    }
