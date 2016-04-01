@@ -1,0 +1,21 @@
+<#
+.SYNOPSIS 
+  This script disables whichever users you specify in the $users variable be it a text file or array.
+.DESCRIPTION
+  Add users SamAccountName to $users text file and run script.  You can also edit the description
+  of the user to let them know why it's been disabled.
+.EXAMPLES
+  In the $users variable you can add the usernames via array like so @(username1,username2,username3) or
+  edit the text file by putting one username on each line.
+#>
+
+
+$users = get-content "C:\users\username\Desktop\Stuff.txt"
+
+$i = 0
+foreach ($user in $users){
+$i++
+Set-ADAccountControl $user -Enabled $false
+Set-ADUser $user -Description "Do not re-enable without authorization."
+Write-Progress -Activity "Locking out user accounts" -Status "Current Status" -PercentComplete (($i / $users.count)*100)
+}
