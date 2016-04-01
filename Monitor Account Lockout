@@ -1,0 +1,143 @@
+<#
+###########################
+#
+#  Monitor 1 user account for Lock Out
+#  Version 1.0
+#  Created by Max Harris
+#  
+#  3 March 2016
+#
+###########################
+
+.Synopsis
+    Watch a local DC for $account (Pre-2k Logon) to be locked out
+    upon noticing the lockout pull logs from PDCs to determine
+    what system locked out the specified account.
+    Start the Script and provide the Account input when requested.
+.DESCRIPTION
+    Watch a local DC for $account (Pre-2k Logon) to be locked out
+    upon noticing the lockout pull logs from PDCs to determine
+    what system locked out the specified account.
+    Start the Script and provide the Account input when requested
+    The Script with check the Account provied to see if it is 
+    locked out.  If not, it will sleep for 90 seconds, then check
+    again.  It will repeat this proccess until the it notices
+    the account is locked out or terminated by user.
+    When the account is locked out the script will poll the
+    PDC for the Security Log information on ALL lockout events.
+    Even ID 4740.  It will then parse ease log entry for
+    the Account SID and save the information to file and 
+    display this information to the screen when complete.
+    At which time the script will end.  The "$savefileloc"
+    variable determines where the file with the locked out
+    information will be saved.  By default it is saved to
+    "c:\temp\monitorLockout".  If this directory does
+    not exist when the script is executed it will create it.
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+#>
+
+###########################
+## Constants
+###########################
+
+###########################
+##  $SaveFileLoc = The Directory path to save the out put in
+##  $SaveFileName = The Filename to save the output to
+##  $SaveFile =  The concatenation of the directory path, Date/Time, user and filename
+##  This Variable is created later after the user name has been inputed
+###########################
+$SaveFileLoc = "c:\temp\monitorLockout"
+$SaveFileName = "monitorLockout.csv"
+
+# Test SaveFileLoc, Create if it does not exist
+If (!(Test-Path $SaveFileLoc)) {New-Item -Path $savefileloc -ItemType Directory -Force}
+
+## Create full filename and path with date
+# $today will be like "2015Jun30-1300L"
+# $today is part of the save file name
+$today = get-date -uformat "%Y%b%d-%H%ML"
+
+#Set the Variable to "False" which is used to control the loop
+$lockedout = $false
+
+###########################
+## Functions
+###########################
+
+#Funtion to get the date/time for the Loop
+Function rightnow
+    {
+    get-date -uformat "%Y%b%d-%H%ML"
+    }
+
+#Function to get account lock out information
+Function UserAcctInfo ($user)
+    {
+    Get-ADUser -Identity $user -Properties LockedOut -ErrorAction Stop
+    }
+
+###########################
+## Start of Script
+###########################
+
+#Ask the person running the script for the logon name of the account to monitor
+$user = Read-Host "`n`n`n`nEnter locked out user's pre2k logon name or Q to quit "
+    if ($user -ne "q") # -or !($EDIPI -eq $null))
+        {
+        "`n"
+
+        #create save file name to include Date/Time and UserName
+        $SaveFile = $SaveFileLoc + "\$today $user $SaveFileName"
+
+        #Get Displayname of the account being monitored
+        #Some of these properties are used later
+        $userproperties = Get-ADUser -Identity $user -Properties Displayname
+
+        #Start of loop watching the account to see when it gets locked out
+        #check account if not locked out sleep for 90 seconds then check again
+        while ($lockedout -ne $true)
+            {
+            $now = rightnow
+            "Checking $user ($($userproperties.displayname)) at $now"
+            $userinfo = useracctinfo $user
+            $lockedout = $userinfo.lockedout
+            if ($lockedout -ne $true) {start-sleep -Seconds 90}
+            }
+        #End of loop watching the account to see when it gets locked out
+
+        #Determine the name of the PDC and place it in the Variable $PDCEmulator 
+        $PDCEmulator = [system.directoryservices.activedirectory.domain]::getcurrentdomain().pdcroleowner
+
+        #Sleep for 30 seconds to ensure PDC has the log information before retrieving it
+        start-sleep -Seconds 30
+
+        "`nAccount $user was found locked.  Pulling log files"
+
+        #Get Lock out Events from the Securtiy Log on the PDC
+        $LockedOutEvents = Get-WinEvent -ComputerName $PDCEmulator.Name -FilterHashtable @{LogName='Security';Id=4740} -ErrorAction Stop | Sort-Object -Property TimeCreated
+
+        #turn information into an object to write, then add to array
+        Foreach($Event in $LockedOutEvents) 
+            {             
+                If($Event | Where {$_.Properties[2].value -match $UserInfo.SID.Value}) 
+                {  
+               
+                    $Info = $Event | Select-Object -Property @( 
+                    @{Label = 'User';               Expression = {$_.Properties[0].Value}} 
+                    @{Label = 'DisplayName';        Expression = {$userproperties.displayname}}
+                    @{Label = 'DomainController';   Expression = {$_.MachineName}} 
+                    @{Label = 'EventId';            Expression = {$_.Id}} 
+                    @{Label = 'LockedOutTimeStamp'; Expression = {$_.TimeCreated}} 
+                    @{Label = 'Message';            Expression = {$_.Message -split "`r" | Select -First 1}} 
+                    @{Label = 'LockedOutLocation';  Expression = {$_.Properties[1].Value}} 
+                    ) 
+                $info | export-csv $savefile -Append -NoTypeInformation                                 
+                }#end ifevent 
+            }#end foreach lockedout event 
+
+        } #until ($EDIPI -eq "q")
+        "`n`nThere were $($lockedoutevents.count) Lock Out Events`n"
+        $info
