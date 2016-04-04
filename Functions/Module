@@ -1,0 +1,381 @@
+##############################################################
+##############################################################
+##                                                          ##
+##      This is a module that contains all of the           ##
+##      Functions listed in the functions folder            ##
+##      on https://github.com/jsadler/PowerShell-Scripts    ##
+##                                                          ##                   
+##      To use module:                                      ##
+##        -copy the raw text here to a                      ##
+##        text file.                                        ##
+##        -Name it whatever you want                        ##
+##        -Place text file in PowerShell module folder      ##
+##        -Within PowerShell/ISE run 'Import-Module         ##
+##        ModuleName'                                       ##
+##                                                          ##
+##                                  Compiled by Joe Sadler  ##
+##############################################################
+##############################################################
+
+Function Show-ModuleHelp{
+@(
+"Get-IPRange"
+"Get-InstalledSoftware"
+"Get-LastLogon"
+"Get-LoggedOnUser"
+"Get-MACAddress"
+"Get-Uptime"
+"Get-UserProfiles"
+"Hide-PowerShell & Show-PowerShell"
+"Open-DiscTray"
+"Press Enter to Continue"
+"Test-Port"
+)
+
+}
+
+
+function Get-IPrange
+{
+<# 
+  .SYNOPSIS  
+    Get the IP addresses in a range 
+  .EXAMPLE 
+   Get-IPrange -start 192.168.8.2 -end 192.168.8.20 
+  .EXAMPLE 
+   Get-IPrange -ip 192.168.8.2 -mask 255.255.255.0 
+  .EXAMPLE 
+   Get-IPrange -ip 192.168.8.3 -cidr 24 
+#> 
+ 
+param 
+( 
+  [string]$start, 
+  [string]$end, 
+  [string]$ip, 
+  [string]$mask, 
+  [int]$cidr 
+) 
+ 
+function IP-toINT64 () { 
+  param ($ip) 
+ 
+  $octets = $ip.split(".") 
+  return [int64]([int64]$octets[0]*16777216 +[int64]$octets[1]*65536 +[int64]$octets[2]*256 +[int64]$octets[3]) 
+} 
+ 
+function INT64-toIP() { 
+  param ([int64]$int) 
+
+  return (([math]::truncate($int/16777216)).tostring()+"."+([math]::truncate(($int%16777216)/65536)).tostring()+"."+([math]::truncate(($int%65536)/256)).tostring()+"."+([math]::truncate($int%256)).tostring() )
+} 
+ 
+if ($ip) {$ipaddr = [Net.IPAddress]::Parse($ip)} 
+if ($cidr) {$maskaddr = [Net.IPAddress]::Parse((INT64-toIP -int ([convert]::ToInt64(("1"*$cidr+"0"*(32-$cidr)),2)))) } 
+if ($mask) {$maskaddr = [Net.IPAddress]::Parse($mask)} 
+if ($ip) {$networkaddr = new-object net.ipaddress ($maskaddr.address -band $ipaddr.address)} 
+if ($ip) {$broadcastaddr = new-object net.ipaddress (([system.net.ipaddress]::parse("255.255.255.255").address -bxor $maskaddr.address -bor $networkaddr.address))} 
+ 
+if ($ip) { 
+  $startaddr = IP-toINT64 -ip $networkaddr.ipaddresstostring 
+  $endaddr = IP-toINT64 -ip $broadcastaddr.ipaddresstostring 
+} else { 
+  $startaddr = IP-toINT64 -ip $start 
+  $endaddr = IP-toINT64 -ip $end 
+} 
+ 
+ 
+for ($i = $startaddr; $i -le $endaddr; $i++) 
+{ 
+  INT64-toIP -int $i 
+}
+
+}
+
+
+function Get-InstalledSoftware {
+<#
+.Synopsis
+   Pulls installed software on a machine by querying the registry  
+.DESCRIPTION
+   Function opens a connection to whichever machine you specify in the $computername variable
+   and queries the registry for all installed software withing the HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\ directory.
+.EXAMPLE
+   Get-InstalledSoftware -ComputerName <ComputerName>
+.EXAMPLE
+   Get-InstalledSoftware -CN <ComputerName>
+#>
+[cmdletbinding()]
+Param(
+    [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+    [alias('ComputerName')]
+    $cn
+     )
+
+foreach ($i in $cn) {
+
+
+write-host $cn
+Invoke-command -computer $cn {Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |  Select-Object DisplayName, DisplayVersion, Publisher, InstallDate}
+}
+}
+
+function Get-LastLogOn{
+<#
+.SYNOPSIS
+  Shows last user to logon to a machine
+.DESCRIPTION
+  This function queries the local C:\users\ directory and displays the user profile that most recently edited.
+.EXAMPLE
+  Get-LastLogOn -ComputerName <ComputerName>
+.EXAMPLE
+  Get-LastLogOn -CN <ComputerName
+#>
+
+[cmdletbinding()]
+param(
+    [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+               [alias("CN")]
+               $ComputerName
+)
+Get-WmiObject -Class win32_userprofile -filter "NOT SID = 'S-1-5-18' AND NOT SID = 'S-1-5-19' AND NOT SID = 'S-1-5-20'" -computername $computername | sort lastusetime -Descending | select -First 1 | select localpath
+}
+
+Function Get-LoggedOnUser{
+<#
+.SYNOPSIS
+    Get username of currently logged on user  
+.DESCRIPTION
+    This function queries whichever machine you specify for an active "explorer.exe" process and prints both their domain and username
+    **NOTE: If no one is currently logged on it will return nothing.**
+.EXAMPLE
+    Get-LoggedOnUser -ComputerName <ComputerName>
+.EXAMPLE
+    Get-LoggedOnUser -CN <ComputerName>
+#>
+  Param(
+    [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+               [alias("ComputerName")]
+               $CN
+  )
+Get-WMIObject Win32_Process -filter 'name="explorer.exe"' -computername $cn | 
+ForEach-Object { 
+write-host ""
+$owner = $_.GetOwner(); '{0}\{1}' -f $owner.Domain, $owner.User 
+write-host ""
+} |	Sort-Object | Get-Unique
+
+}
+
+<#
+
+    .SYNOPSIS 
+      
+      Outputs the MAC Address of the selected computer/server
+
+    .DESCRIPTION
+
+      The Get-MACAddress function utilizes Get-WMIObject to pull the 
+      NetworkAdapterConfiguration of a remote computer where IPEnabled is equal to true.
+      It then selects the PSComputerName and MACAddress properties and outputs them to the screen.
+
+    .PARAMETER computer
+
+      (required) Will display the MAC Address of the entered computer
+
+    .EXAMPLE
+    
+      Display the MAC Address of Our-DC-001v
+    
+      Get-MACAddress -computer "Our-DC-001v"
+
+#>
+
+function Get-MACAddress{
+    [CmdletBinding(SupportsShouldProcess=$true, 
+                  PositionalBinding=$false,
+                  ConfirmImpact='Medium')]
+Param
+    (
+        # Enter a computer/server name
+        [Parameter(Mandatory=$true, 
+                   ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   ValueFromRemainingArguments=$false, 
+                   Position=0)]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
+        [Alias("i")]
+        $Identity
+    ) 
+    $correct = $false
+    try{
+        Get-ADComputer $identity | Out-Null
+        $correct = $true
+        }
+    catch{Write-Host -ForegroundColor Red "$identity does not exist"}
+    if($correct -eq $true){
+        Get-WmiObject "Win32_NetworkAdapterConfiguration" -ComputerName "$identity" -Filter "IpEnabled = TRUE" | ft PSComputerName,MACAddress -AutoSize
+        }    
+
+    }
+
+function Get-Uptime {
+<#
+.SYNOPSIS
+    Displays system uptime
+.DESCRIPTION
+    This function uses the 'systeminfo' command to pull hostname and system boot time.  
+.EXAMPLE
+    Get-Uptime -ComputerName <ComputerName>
+.EXAMPLE
+    Get-Uptime -CN <ComputerName>
+#>
+[CmdletBinding()]
+
+param(
+    [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+               [alias('cn')]
+               $ComputerName    
+    )
+Write-Host -ForegroundColor Green  "╔════════════════════════════════════════════════════════════╗"
+Write-Host -ForegroundColor Green  "║                       Please Wait...                       ║"
+Write-Host -ForegroundColor Green  "╚════════════════════════════════════════════════════════════╝"
+$array = @(
+systeminfo /s $ComputerName
+)
+Clear-host
+write-host ""
+write-host $array[1] -ForegroundColor Green
+write-host $array[11] -ForegroundColor Green
+write-host ""
+}
+
+Function Get-UserProfiles{
+<#
+.SYNOPSIS
+    Pulls all user profiles on a machine  
+.DESCRIPTION
+    This function queries the C:\users\ directory on whichever machine you specify and gives you a user friendly output.
+.EXAMPLE
+    Get-UserProfiles -CN <ComputerName>
+.EXAMPLE
+    Get-UserProfiles -ComputerName <ComputerName>
+    
+#>
+  Param(
+      [parameter(Mandatory = $true,
+               ValueFromPipelineByPropertyName=$true,
+               Position = 0)]
+               [alias('cn')]
+               $ComputerName
+  )
+$ErrorActionPreference = "silentlycontinue"
+$accounts = Get-ChildItem \\$ComputerName\C$\users | ForEach-Object { $_.Name } 
+
+foreach ($account in $accounts){
+Get-ADUser $account | select name
+}
+}
+
+<#
+.SYNOPSIS
+  Functions to either show or hide PowerShell Window
+.DESCRIPTION
+  This is a bit of C# code turned into PowerShell functions.  Once you run this you can type Hide-PowerShell to run the PowerShell
+  process in the background or Show-PowerShell to bring the PowerShell process back to the foreground.  This is a great addition
+  to Windows Forms and PowerShell GUIs to keep the PowerShell Window hidden.
+.EXAMPLE
+  Hide-PowerShell
+  Sleep -Seconds 5
+  Show-PowerShell
+#>
+   
+$script:showWindowAsync = Add-Type –memberDefinition @”
+[DllImport("user32.dll")]
+public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+“@ -name “Win32ShowWindowAsync” -namespace Win32Functions –passThru
+
+    function Show-PowerShell() {
+         $null = $showWindowAsync::ShowWindowAsync((Get-Process –id $pid).MainWindowHandle, 10)
+    }
+
+    function Hide-PowerShell() {
+        $null = $showWindowAsync::ShowWindowAsync((Get-Process –id $pid).MainWindowHandle, 2)
+    }
+
+<#
+.Synopsis
+   Opens/Closes disc tray on machine
+.DESCRIPTION
+   Opens/Closes disc tray on machine
+.EXAMPLE
+   Open-DiscTray -Eject
+.EXAMPLE
+   Open-DiscTray -Close
+.NOTE
+   Can be used on remote machine via invoke-command.  Great for fucking with Tyler.
+#>
+
+function Open-DiscTray {
+[CmdletBinding()]            
+param(            
+[switch]$Eject,            
+[switch]$Close            
+)            
+try {            
+    $Diskmaster = New-Object -ComObject IMAPI2.MsftDiscMaster2            
+    $DiskRecorder = New-Object -ComObject IMAPI2.MsftDiscRecorder2            
+    $DiskRecorder.InitializeDiscRecorder($DiskMaster)            
+    if ($Eject) {            
+     $DiskRecorder.EjectMedia()            
+    } elseif($Close) {            
+     $DiskRecorder.CloseTray()            
+    }            
+} catch {            
+    Write-Error "Failed to operate the disk. Details : $_"            
+}
+}
+
+<#
+.Synopsis
+   Functions that adds "Press Enter Key to Continue" to a script
+.DESCRIPTION
+   Gives you the ability to add "Press Enter Key to Continue" anywhere in your script
+   
+#>
+
+function Press-Enter{
+   read-Host 'Press Enter to continue' | Out-Null
+}
+
+###Test-Port Function
+function Test-Port {
+  Param(
+  [string]$cn,
+  [int]$port
+  )
+  $ErrorActionPreference = “SilentlyContinue”
+  $socket = new-object Net.Sockets.TcpClient
+  $socket.Connect($cn, $port)
+  if ($socket.Connected) {
+    write-output ""
+    write-output "Port $port is open on $cn"
+    $socket.Close()
+  }
+  else {
+   write-output "Port $port is not opened, open Windows Firewall with Advanced features to open the port"
+  }
+  $socket = $null
+}
+
+write-host -foregroundcolor Green "Module has been imported.  To view a list of available commands type 'Show-ModuleHelp'"
+
