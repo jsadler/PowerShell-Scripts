@@ -1,4 +1,4 @@
-#Functions
+# *Functions*
 
 ##Get-IPRange
   >Enumerates all IP addresses in a range. 
