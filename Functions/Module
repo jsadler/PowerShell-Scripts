@@ -13,6 +13,10 @@
 ##        -Within PowerShell/ISE run 'Import-Module         ##
 ##        ModuleName'                                       ##
 ##                                                          ##
+##    Version Control:                                      ##
+##      5 April 2016 - Created module, added eleven         ##
+##      functions.                                          ##
+##                                                          ##
 ##                                  Compiled by Joe Sadler  ##
 ##############################################################
 ##############################################################
