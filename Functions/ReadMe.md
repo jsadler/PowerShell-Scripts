@@ -1,5 +1,8 @@
 # *Functions*
 
+##Add-PressEnter
+  >Place this function in your script to add "Press Enter to Continue" ability
+
 ##Get-IPRange
   >Enumerates all IP addresses in a range. 
 
@@ -26,9 +29,6 @@
   
 ##Open-DiscTray
   >Remotely open or close disc tray.  Great for fucking with Tyler.
-  
-##Press Enter To Continue
-  >Place this function in your script to add "Press Enter to Continue" ability
   
 ##Test-Port
   >Checks to see if a specified port is opened on a specified machine
