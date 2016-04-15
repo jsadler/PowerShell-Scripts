@@ -1,43 +1,49 @@
-##########
-##
-##Create GUI
-##
-##########
- 	[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+Add-Type -AssemblyName PresentationFramework
+Add-Type -AssemblyName PresentationCore
 ###Build Form
  	$Form = New-Object System.Windows.Forms.Form
-    	$Form.Text = "Sadler Sample Form"
+    	$Form.Text = "Data Entry Form"
     	$Form.Width = 500
     	$Form.Height = 200
     	$Form.AutoSizeMode = "GrowAndShrink"
     	$Form.StartPosition = "CenterScreen"
 ###Build Label
  	$Label = New-Object System.Windows.Forms.Label
-    	$Label.text = "Type Yo' Shit"
-    	$Label.Font = New-Object System.Drawing.Font("Calibri",30)
+    	$Label.text = "Enter Computer Name"
+    	$Label.Font = New-Object System.Drawing.Font("Calibri",20)
     	$Label.AutoSize = $true
     	$label.Left = 110
     	$label.Top = 10
-###Build Button
+###Build OK Button
  	$button = new-object System.Windows.Forms.Button
-    	$button.left = 335
+    	$button.left = 110
     	$button.Top = 98
     	$button.width = 100
     	$button.Text = "OK"
     	$button.Add_Click({$textbox.text,$form.Close()})
+###Build Cancel Button
+ 	$cbutton = new-object System.Windows.Forms.Button
+    	$cbutton.left = 260
+    	$cbutton.Top = 98
+    	$cbutton.width = 100
+    	$cbutton.Text = "Cancel"
+    	$cbutton.Add_Click({$form.Close()})
 ###Use Enter/Esc key
- 	$Form.KeyPreview = $True
- 	$Form.Add_KeyDown({if ($_.KeyCode -eq "Enter")
- 	{$textBox.Text,$objForm.Close()}})
- 	$Form.Add_KeyDown({if ($_.KeyCode -eq "Escape")
- 	{$Form.Close()}})
+     $Form.KeyPreview = $True
+     $Form.Add_KeyDown({if ($_.KeyCode -eq "Enter") 
+     {$textBox.Text,$Form.Close()}})
+     $Form.Add_KeyDown({if ($_.KeyCode -eq "Escape") 
+     {$Form.Close()}})
 ###Build Text Box
  	$textBox = New-Object System.Windows.Forms.TextBox
-    	$textBox.left = 125
-    	$textBox.Top = 100
+    	$textBox.left = 135
+    	$textBox.Top = 50
     	$textBox.width = 200
 ###Add Controls to Form
  	$Form.Controls.add($button)
  	$Form.Controls.add($textBox)
  	$form.controls.add($label)
- 	[void] $Form.ShowDialog()
+    $form.controls.add($cbutton)
+ 	[void]$Form.ShowDialog()
