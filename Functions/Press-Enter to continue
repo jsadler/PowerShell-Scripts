@@ -6,6 +6,6 @@
    
 #>
 
-function Press-Enter{
+function Add-PressEnter{
    read-Host 'Press Enter to continue' | Out-Null
 }
