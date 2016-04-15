@@ -16,27 +16,31 @@
 ##    Version Control:                                      ##
 ##      5 April 2016 - Created module, added eleven         ##
 ##      functions.                                          ##
+##      15 April 2016 - Renamed Add-PressEnter to fit       ##
+##      naming convention                                   ##
 ##                                                          ##
 ##                                  Compiled by Joe Sadler  ##
 ##############################################################
 ##############################################################
 
 Function Show-ModuleHelp{
-@(
-"Get-IPRange"
-"Get-InstalledSoftware"
-"Get-LastLogon"
-"Get-LoggedOnUser"
-"Get-MACAddress"
-"Get-Uptime"
-"Get-UserProfiles"
-"Hide-PowerShell & Show-PowerShell"
-"Open-DiscTray"
-"Press Enter to Continue"
-"Test-Port"
+$table = @(
+""
+"`nGet-IPRange"
+"`nGet-InstalledSoftware"
+"`nGet-LastLogon"
+"`nGet-LoggedOnUser"
+"`nGet-MACAddress"
+"`nGet-Uptime"
+"`nGet-UserProfiles"
+"`nHide-PowerShell & Show-PowerShell"
+"`nOpen-DiscTray"
+"`nAdd-PressEnter"
+"`nTest-Port"
 )
-
+write-host $table -foregroundcolor green
 }
+
 
 
 function Get-IPrange
@@ -357,7 +361,7 @@ try {
    
 #>
 
-function Press-Enter{
+function Add-PressEnter{
    read-Host 'Press Enter to continue' | Out-Null
 }
 
