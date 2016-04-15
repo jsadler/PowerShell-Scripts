@@ -6,6 +6,9 @@
 ##Create Pop-Up
   >Creates a GUI pop-up using either a COM Object or .Net Framework
   
+##Encode/Decode PowerShell String
+  >Quick How-To for encoding and Decoding PowerShell strings
+  
 ##Give Access to Mailbox
   >Give you or another user access to someone else's mailbox.  Must be ran from Exchange Shell.
   
