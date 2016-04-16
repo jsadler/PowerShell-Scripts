@@ -1,0 +1,169 @@
+#Functions
+##############
+<# Hide PowerShell Window
+.SYNOPSIS
+  Functions to either show or hide PowerShell Window
+.DESCRIPTION
+  This is a bit of C# code turned into PowerShell functions.  Once you run this you can type Hide-PowerShell to run the PowerShell
+  process in the background or Show-PowerShell to bring the PowerShell process back to the foreground.  This is a great addition
+  to Windows Forms and PowerShell GUIs to keep the PowerShell Window hidden.
+.EXAMPLE
+  Hide-PowerShell
+  Sleep -Seconds 5
+  Show-PowerShell
+#>
+$script:showWindowAsync = Add-Type –memberDefinition @”
+[DllImport("user32.dll")]
+public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+“@ -name “Win32ShowWindowAsync” -namespace Win32Functions –passThru
+
+function Hide-PowerShell() {
+$null = $showWindowAsync::ShowWindowAsync((Get-Process –id $pid).MainWindowHandle, 2)
+}
+
+Hide-PowerShell
+
+###Add Assemblies
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+Add-Type -AssemblyName PresentationFramework
+Add-Type -AssemblyName PresentationCore
+
+###Build Main Form
+ 	$Form = New-Object System.Windows.Forms.Form
+    	$Form.Text = "Data Entry Form"
+    	$Form.Width = 500
+    	$Form.Height = 200
+    	$Form.AutoSizeMode = "GrowAndShrink"
+    	$Form.StartPosition = "CenterScreen"
+###Build Label
+ 	$Label = New-Object System.Windows.Forms.Label
+    	$Label.text = "Enter Computer Name"
+    	$Label.Font = New-Object System.Drawing.Font("Calibri",20)
+    	$Label.AutoSize = $true
+    	$label.Left = 110
+    	$label.Top = 10
+###Build OK Button
+ 	$button = new-object System.Windows.Forms.Button
+    	$button.left = 110
+    	$button.Top = 98
+    	$button.width = 100
+    	$button.Text = "OK"
+    	$button.Add_Click({$textbox.text,$form.Close()})
+###Build Cancel Button
+ 	$cbutton = new-object System.Windows.Forms.Button
+    	$cbutton.left = 260
+    	$cbutton.Top = 98
+    	$cbutton.width = 100
+    	$cbutton.Text = "Cancel"
+    	$cbutton.Add_Click({$form.Close()})
+###Use Enter/Esc key
+     $Form.KeyPreview = $True
+     $Form.Add_KeyDown({if ($_.KeyCode -eq "Enter") 
+     {$textBox.Text,$Form.Close()}})
+     $Form.Add_KeyDown({if ($_.KeyCode -eq "Escape") 
+     {$Form.Close()}})
+###Build Text Box
+ 	$textBox = New-Object System.Windows.Forms.TextBox
+    	$textBox.left = 135
+    	$textBox.Top = 50
+    	$textBox.width = 200
+###Add Controls to Form
+ 	$Form.Controls.add($button)
+ 	$Form.Controls.add($textBox)
+ 	$form.controls.add($label)
+    $form.controls.add($cbutton)
+ 	[void]$Form.ShowDialog()
+
+#Functions
+
+<#Test-Port
+.Synopsis
+  Function that verifies if a port is opened or closed on a machine
+.DESCRIPTION
+  Used to check whether or not a port that you specify is opened or closed on a machine that you specify 
+.EXAMPLE
+  Test-Port -cn <ComputerName> -Port <PortNumber>
+.EXAMPLE
+  Test-port -cn TEST-DC-001 -Port 443
+
+#>
+function Test-Port {
+  Param(
+  [string]$cn,
+  [int]$port
+  )
+  $ErrorActionPreference = “SilentlyContinue”
+  $socket = new-object Net.Sockets.TcpClient
+  $socket.Connect($cn, $port)
+  if ($socket.Connected) {
+    write-output ""
+    write-output "Port $port is open on $cn"
+    $socket.Close()
+  }
+  else {
+   write-output "Port $port is not opened, open Windows Firewall with Advanced features to open the port"
+  }
+  $socket = $null
+}
+
+###Build Checkbox Form
+$form = New-Object System.Windows.Forms.Form
+$form.Text = $textBox.text
+$Form.AutoSize = $true
+ 	
+###Label
+$Label = New-Object System.Windows.Forms.Label
+$Label.text = $textBox.text + " Results"
+$Label.Font = New-Object System.Drawing.Font("Calibri",16)
+$Label.AutoSize = $true
+$label.Left = 10
+$label.Top = 10
+
+###Encase Checkbox
+$ECheckbox = New-Object System.Windows.Forms.CheckBox
+$ECheckbox.UseVisualStyleBackColor = $True
+$ECheckbox.TabIndex = 1
+$ECheckbox.Text = "Encase Installed"
+$ECheckbox.Top = 80
+$ECheckbox.Left = 40
+$ECheckbox.DataBindings.DefaultDataSourceUpdateMode = 0
+$ECheckbox.Name = "EnCase Checkbox"
+$ECheckbox.Checked = $true
+$ECheckbox.Font = New-Object System.Drawing.Font("Calibri",12)
+$ECheckbox.AutoSize = $true
+
+###Firewall Checkbox
+$FCheckbox = New-Object System.Windows.Forms.CheckBox
+$FCheckbox.UseVisualStyleBackColor = $True
+$FCheckbox.TabIndex = 1
+$FCheckbox.Text = "Firewall Open"
+$FCheckbox.top = 130
+$FCheckbox.left = 40
+$FCheckbox.DataBindings.DefaultDataSourceUpdateMode = 0
+$FCheckbox.Name = "Firewall Checkbox"
+$FCheckbox.Checked = $True
+$FCheckbox.Font = New-Object System.Drawing.Font("Calibri",12)
+$FCheckbox.AutoSize = $true
+
+###Build OK Button
+$button = new-object System.Windows.Forms.Button
+$button.left = 100
+$button.Top = 200
+$button.width = 80
+$button.Text = "OK"
+$button.Add_Click({$form.Close()})
+
+###Use Enter/Esc key to close form
+$Form.KeyPreview = $True
+$Form.Add_KeyDown({if ($_.KeyCode -eq "Enter") 
+{$Form.Close()}})
+$Form.Add_KeyDown({if ($_.KeyCode -eq "Escape") 
+{$Form.Close()}})
+
+###Add form controls
+$form.controls.Add($ECheckbox)
+$form.controls.Add($FCheckbox)
+$form.controls.add($label)
+$form.controls.Add($button)
+$form.ShowDialog()
