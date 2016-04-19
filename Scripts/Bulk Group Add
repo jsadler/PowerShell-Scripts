@@ -1,0 +1,19 @@
+<#
+.SYNOPSIS 
+Script to add many users/computers to a group.
+.DESCRIPTION
+This script allows you to add many users/computers to a group.  To use, edit the $machine variable with a path to
+your machine list or create your own array.  A dollar sign ($) is required to be at the end of the $machine variable 
+in the -Members switch as anotated below for the script to work.
+.EXAMPLES
+
+#>
+
+$machines = Get-Content C:\Path
+$i = 0
+
+Foreach($machine in $machines){
+$i++
+Add-ADGroupMember "Group Name" -Members "$machine$" #Dollar Sign ($) at the end of $machines is required for script to work
+Write-Progress -Activity "Adding item(s) to group..." -Status "Status:" -PercentComplete (($i / $machines.count)*100)
+}
