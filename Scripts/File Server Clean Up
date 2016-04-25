@@ -1,0 +1,41 @@
+<#
+.SYNOPSIS
+  Script that searches for possibly unauthorized file extensions
+.DESCRIPTION
+  Add or Remove file extensions from the array to in/exclude them in the search.  Edit
+  the root variable with the directory you want to search.
+.EXAMPLE
+  $root = C:\search\this\directory
+.EXAMPLE
+  $ext variable format is as follows:  "*.bmp" or any other file extension
+.NOTE
+  If file path is longer than 260 characters you may get an error.  A work around is to use Robocopy
+#>
+
+# Set this variable to your root or share directory
+$root = 'c:\'
+
+# Add or remove items from this list
+$exts = @(
+"*.mp3"
+#"*.wav"
+"*.mp4"
+#"*.jpg"
+"*.gif"
+#"*.png"
+)
+
+if (test-path $root){
+
+Write-Host -ForegroundColor Green  "╔════════════════════════════════════════════════════════════╗"
+Write-Host -ForegroundColor Green  "║                       Please Wait...                       ║"
+write-Host -ForegroundColor Green  "║                Searching Files and Folders                 ║"
+Write-Host -ForegroundColor Green  "╚════════════════════════════════════════════════════════════╝"
+
+$files = (Get-ChildItem -Path $root -Recurse: $true -Include: $exts).FullName
+
+$files
+}
+else {
+Write-host -ForegroundColor Red "Path was not found, please enter a valid path"
+}
