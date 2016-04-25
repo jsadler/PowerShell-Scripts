@@ -1,0 +1,8 @@
+<#
+.SYNOPSIS 
+  Function that shows the name of whichever domain controller you authenticated through via system.environment
+#>
+
+function Get-LogonServer{
+[System.Environment]::GetEnvironmentVariable("logonserver")
+}
