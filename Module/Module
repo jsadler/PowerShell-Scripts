@@ -18,7 +18,8 @@
 ##      functions.                                          ##
 ##      15 April 2016 - Renamed Add-PressEnter to fit       ##
 ##      naming convention                                   ##
-##                                                          ##
+##      25 April 2016 - Added Get-LogonServer               ##
+##      function.                                           ##
 ##                                  Compiled by Joe Sadler  ##
 ##############################################################
 ##############################################################
@@ -37,6 +38,7 @@ $table = @(
 "`nOpen-DiscTray"
 "`nAdd-PressEnter"
 "`nTest-Port"
+"`nGet-LogonServer"
 )
 write-host $table -foregroundcolor green
 }
@@ -383,6 +385,10 @@ function Test-Port {
    write-output "Port $port is not opened, open Windows Firewall with Advanced features to open the port"
   }
   $socket = $null
+}
+
+function Get-LogonServer{
+[System.Environment]::GetEnvironmentVariable("logonserver")
 }
 
 write-host -foregroundcolor Green "Module has been imported.  To view a list of available commands type 'Show-ModuleHelp'"
