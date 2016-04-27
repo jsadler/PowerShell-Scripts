@@ -15,6 +15,9 @@
 ##Get-LoggedOnUser
   >Gets the current logged on user of a server or workstation by seeing what usernames have a explorer.exe service running
   
+##Get-LogonServer
+  >Displays the name of whichever server you authenticated through.
+  
 ##Get-MACAddress
   >Gets remote machines MAC address.  Written by James Vaughan 
   
@@ -30,5 +33,9 @@
 ##Open-DiscTray
   >Remotely open or close disc tray.  Great for fucking with Tyler.
   
+##Scan-Port
+  >Verifies if a port is opened or closed.  Uses Test-NetConnection, can only be used on Wind2k12/Win 10 and above.
+  For lower versions of Windows use Test-Port.
+  
 ##Test-Port
-  >Checks to see if a specified port is opened on a specified machine
+  >Verifies if a port is opened or closed via net.socket.
