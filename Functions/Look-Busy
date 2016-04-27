@@ -1,0 +1,54 @@
+function Look-Busy {
+
+    Function Rand_wait{
+    param($speed)
+        Switch ($speed){
+            "Fast"{
+                $Rand = Get-Random -Maximum 3 -Minimum 1
+            }
+            "Med"{
+                $Rand = Get-Random -Maximum 7 -Minimum 5
+            }
+            "Slow"{
+                $Rand = Get-Random -Maximum 15 -Minimum 7
+            }
+            Default{
+                $Rand = Get-Random -Maximum 5 -Minimum 1
+         }
+    }
+        Start-Sleep -Seconds $Rand
+    }
+
+    Function Results {
+        $Number = Get-Random -Minimum 100 -Maximum 100000
+        $Math = $Number%2
+        if ($Math -eq 1){
+            Write-host "Pass" -ForegroundColor Green
+            return $true
+        }Else{
+            Write-host "Fail" -foregroundcolor red
+            return $false
+        }
+    }
+
+#################
+#End of Functions
+#################
+Cls
+While ($true){
+    $Rand = Get-Random -Minimum 3 -Maximum 5
+    $Array = @(
+        "Checking Tactical Value: ",
+        "Verifying Server Context: ",
+        "Activating Level $Rand scan: ",
+        "Initializing Mission Data: ",
+        "Obfuscating Adversary Data: "
+        "Verifying Replication on PDC: ",
+        "Activating IPSEC Policy:  "
+    )
+    $Choice = Get-Random -Minimum 0 -Maximum ($Array.count - 1)
+    Write-host $Array[$Choice] -nonewline -ForegroundColor White
+    Rand_wait
+    $Res = Results
+}
+}
