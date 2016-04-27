@@ -1,0 +1,74 @@
+ Function Scan-Port
+     {
+     ##CAN ONLY BE RAN FROM WINDOWS 2012/WINDOWS 10 AND ABOVE##
+     <#
+        .Synopsis
+           Perform a Port Scan 
+        .DESCRIPTION
+           Perform a Port Scan of a machine to determine if any ports are accessible
+        .EXAMPLE
+           Scan-Port
+
+           This will perform a Port Scan of the Local Machine with the default listed Ports
+        .EXAMPLE
+           Scan-Port -Ports 21,443,80 -RemoteMachine "MyServer"
+
+           This will perform a Port Scan of the MyServer machine against the listed ports.
+        .NOTES
+           Here are some of the options you can use inside the function
+            ComputerName           : www.bing.com
+            RemoteAddress          : 100.200.150.250
+            RemotePort             : 80
+            InterfaceAlias         : Wi-Fi
+            SourceAddress          : 192.168.0.2
+            PingSucceeded          : False
+            PingReplyDetails (RTT) : 0 ms
+            TcpTestSucceeded       : True
+
+        #>
+        [CmdletBinding(SupportsShouldProcess=$true)]
+
+        Param (
+                [Parameter(ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   Position=0)]
+                [ValidateNotNull()]
+                [ValidateNotNullOrEmpty()]
+                [Alias("RemoteMachine","PSComputerName","MachineName","cn")] 
+                [string]
+                $ComputerName,
+
+                [Parameter(ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true, 
+                   Position=1)]
+                [ValidateNotNull()]
+                [ValidateNotNullOrEmpty()]
+                [array]
+                $Ports)
+        
+        Begin
+            {
+            Write-Host "Beginning Scan of $($Ports.Count) port(s) on $ComputerName" -ForegroundColor Green
+            }
+        Process
+            {
+            if ($pscmdlet.ShouldProcess($ComputerName, "PortScan"))
+                {
+                Foreach ($Port in $Ports)
+                    {
+                    $PTResult = Test-NetConnection -ComputerName $ComputerName -Port $Port -WarningAction SilentlyContinue
+                    if ($PTResult.TcpTestSucceeded) 
+                         {
+                        Write-Host $PTResult.RemotePort " is open on " $PTResult.ComputerName -ForegroundColor Green
+                         }
+                    Else {
+                        Write-Host $PTResult.RemotePort " is NOT open on " $PTResult.ComputerName -ForegroundColor Red}
+                         }
+                }
+            }
+        End
+            {
+            Write-Host "Scanning Complete" -ForegroundColor Green
+            }
+
+     }
