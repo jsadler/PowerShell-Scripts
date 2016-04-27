@@ -21,6 +21,6 @@ $ErrorActionPreference = "silentlycontinue"
 $accounts = Get-ChildItem \\$ComputerName\C$\users | ForEach-Object { $_.Name } 
 
 foreach ($account in $accounts){
-Get-ADUser $account | select name
+Get-ADUser $account -properties displayname | select samaccountname,displayname
 }
 }
