@@ -1,0 +1,74 @@
+###Build Checkbox Form
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "Results"
+$Form.AutoSize = $true
+ 	
+###Label
+$Label = New-Object System.Windows.Forms.Label
+$Label.text = "Steve's Results"
+$Label.Font = New-Object System.Drawing.Font("Calibri",16)
+$Label.AutoSize = $true
+$label.Left = 10
+$label.Top = 10
+
+###Checkbox1
+$ECheckbox = New-Object System.Windows.Forms.CheckBox
+$ECheckbox.UseVisualStyleBackColor = $True
+$ECheckbox.TabIndex = 1
+$ECheckbox.Text = "Loser"
+$ECheckbox.Top = 80
+$ECheckbox.Left = 40
+$ECheckbox.DataBindings.DefaultDataSourceUpdateMode = 0
+$ECheckbox.Name = "Checkbox1"
+$ECheckbox.Checked = $true
+$ECheckbox.Font = New-Object System.Drawing.Font("Calibri",12)
+$ECheckbox.AutoSize = $true
+
+###Checkbox2
+$FCheckbox = New-Object System.Windows.Forms.CheckBox
+$FCheckbox.UseVisualStyleBackColor = $True
+$FCheckbox.TabIndex = 1
+$FCheckbox.Text = "Douche"
+$FCheckbox.top = 130
+$FCheckbox.left = 40
+$FCheckbox.DataBindings.DefaultDataSourceUpdateMode = 0
+$FCheckbox.Name = "Checkbox2"
+$FCheckbox.Checked = $True
+$FCheckbox.Font = New-Object System.Drawing.Font("Calibri",12)
+$FCheckbox.AutoSize = $true
+
+###Checkbox3
+$GCheckbox = New-Object System.Windows.Forms.CheckBox
+$GCheckbox.UseVisualStyleBackColor = $True
+$GCheckbox.TabIndex = 1
+$GCheckbox.Text = "Cool"
+$GCheckbox.Top = 180
+$GCheckbox.Left = 40
+$GCheckbox.DataBindings.DefaultDataSourceUpdateMode = 0
+$GCheckbox.Name = "Checkbox3"
+$GCheckbox.Checked = $false
+$GCheckbox.Font = New-Object System.Drawing.Font("Calibri",12)
+$GCheckbox.AutoSize = $true
+
+###Build OK Button
+$button = new-object System.Windows.Forms.Button
+$button.left = 100
+$button.Top = 220
+$button.width = 80
+$button.Text = "OK"
+$button.Add_Click({$form.Close()})
+
+###Use Enter/Esc key to close form
+$Form.KeyPreview = $True
+$Form.Add_KeyDown({if ($_.KeyCode -eq "Enter") 
+{$Form.Close()}})
+$Form.Add_KeyDown({if ($_.KeyCode -eq "Escape") 
+{$Form.Close()}})
+
+###Add form controls
+$form.controls.Add($ECheckbox)
+$form.controls.Add($FCheckbox)
+$form.controls.Add($GCheckbox)
+$form.controls.add($label)
+$form.controls.Add($button)
+$form.ShowDialog()
