@@ -1,0 +1,5 @@
+$ctime = (get-date).adddays(-26)
+$users = get-aduser -properties whencreated -filter {whencreated -ge $ctime} | select name, whencreated | Sort-Object whencreated
+$users
+write-host ""
+$users.count
