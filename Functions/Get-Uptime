@@ -21,12 +21,5 @@ param(
 Write-Host -ForegroundColor Green  "╔════════════════════════════════════════════════════════════╗"
 Write-Host -ForegroundColor Green  "║                       Please Wait...                       ║"
 Write-Host -ForegroundColor Green  "╚════════════════════════════════════════════════════════════╝"
-$array = @(
-systeminfo /s $ComputerName
-)
-Clear-host
-write-host ""
-write-host $array[1] -ForegroundColor Green
-write-host $array[11] -ForegroundColor Green
-write-host ""
+systeminfo /s $ComputerName | find "System Boot Time:"
 }
