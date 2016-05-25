@@ -1,0 +1,12 @@
+<#
+.SYNOPSIS
+Remotely disconnect a user's session
+
+.DETAILS
+Remotely disconnect a user's session via the tsdiscon.exe utility.  Requires administrative privileges.
+#>
+
+$cred = Get-Credential -UserName "UsernameHere" -Message "Enter Admin Credentials"
+Invoke-Command -Credential $cred -ComputerName "ComputerName" -ScriptBlock {
+tsdiscon.exe console
+}
