@@ -1,0 +1,3 @@
+$Computer = Read-Host "Enter Computer Name"
+$Computer = $Computer.ToUpper()
+$Computer
