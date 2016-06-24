@@ -1,0 +1,5 @@
+# Check for Admin Rights
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
+    Write-Host 'You must run PSRecon from an elevated PowerShell session...'
+    Exit 1
+}
