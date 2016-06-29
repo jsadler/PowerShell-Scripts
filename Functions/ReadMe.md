@@ -40,5 +40,8 @@
   >Verifies if a port is opened or closed.  Uses Test-NetConnection, can only be used on Wind2k12/Win 10 and above.
   For lower versions of Windows use Test-Port.  Created by Max Harris.
   
+##Show-BallonTip
+  >Ballon Tip creator culled from http://www.powertheshell.com/balloontip/
+  
 ##Test-Port
   >Verifies if a port is opened or closed via net.socket.
