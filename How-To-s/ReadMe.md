@@ -1,5 +1,8 @@
 # *How To's*
 
+##Check for Admin rights
+  >Have your script check for admin privileges prior to running
+
 ##Create PS Profile
   >Quick How-To on how to build a personal PowerShell Profile
 
@@ -14,12 +17,18 @@
   
 ##PowerShell GUI
   >Basic GUI template built using Windows .Net Framework
+  
+##PowerShell GUI - Checkbox Form
+  >Basic GUI template for Checkbox Forms
 
 ##PowerShell Text-To-Speech
   >Activates speech synthesizer on Windows machines, completely customizable.  Also great for fucking with Tyler.
   
-##Remotely Pull BIOS info
-  >Queries WMI for BIOS information
+##Remotely Connect to Exchange Shell
+  >Connects to Exchange shell so you can use Exchange commands on your local console
   
 ##Status Bar Example
   >Template to add status bar to PowerShell script
+  
+##User Input to ALL CAPS
+  >Whatever the user enters in the 'Read-Host' cmdlet will be converted to all caps
