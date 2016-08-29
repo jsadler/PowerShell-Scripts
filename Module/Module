@@ -20,10 +20,10 @@
 ##      naming convention                                   ##
 ##      25 April 2016 - Added Get-LogonServer               ##
 ##      function.                                           ##
-##	23 August 2016 - Added Get-LocalAdmin/Restore-          ##
-##	DefaultColors					                                  ##
-##	29 August 2016 - Added Get-Namefield/Get-               ##
-##	LastLoggedOn                                            ##
+##	23 August 2016 - Added Get-LocalAdmin/Restore-      ##
+##	DefaultColors					    ##
+##	29 August 2016 - Added Get-Namefield/Get-           ##
+##	LastLoggedOn                                        ##
 ##                                  Compiled by Joe Sadler  ##
 ##############################################################
 ##############################################################
