@@ -20,6 +20,10 @@
 ##      naming convention                                   ##
 ##      25 April 2016 - Added Get-LogonServer               ##
 ##      function.                                           ##
+##	23 August 2016 - Added Get-LocalAdmin/Restore-          ##
+##	DefaultColors					                                  ##
+##	29 August 2016 - Added Get-Namefield/Get-               ##
+##	LastLoggedOn                                            ##
 ##                                  Compiled by Joe Sadler  ##
 ##############################################################
 ##############################################################
@@ -29,7 +33,6 @@ $table = @(
 ""
 "`nGet-IPRange"
 "`nGet-InstalledSoftware"
-"`nGet-LastLogon"
 "`nGet-LoggedOnUser"
 "`nGet-MACAddress"
 "`nGet-Uptime"
@@ -39,6 +42,12 @@ $table = @(
 "`nAdd-PressEnter"
 "`nTest-Port"
 "`nGet-LogonServer"
+"`nGet-DOS"
+"`nLook-Busy"
+"`nRestore-DefaultColors"
+"`nGet-LocalAdmin"
+"`nGet-NameField"
+"`nGet-LastLoggedOn"
 )
 write-host $table -foregroundcolor green
 }
@@ -132,28 +141,6 @@ Invoke-command -computer $cn {Get-ItemProperty HKLM:\Software\Microsoft\Windows\
 }
 }
 
-function Get-LastLogOn{
-<#
-.SYNOPSIS
-  Shows last user to logon to a machine
-.DESCRIPTION
-  This function queries the local C:\users\ directory and displays the user profile that most recently edited.
-.EXAMPLE
-  Get-LastLogOn -ComputerName <ComputerName>
-.EXAMPLE
-  Get-LastLogOn -CN <ComputerName
-#>
-
-[cmdletbinding()]
-param(
-    [parameter(Mandatory = $true,
-               ValueFromPipelineByPropertyName=$true,
-               Position = 0)]
-               [alias("CN")]
-               $ComputerName
-)
-Get-WmiObject -Class win32_userprofile -filter "NOT SID = 'S-1-5-18' AND NOT SID = 'S-1-5-19' AND NOT SID = 'S-1-5-20'" -computername $computername | sort lastusetime -Descending | select -First 1 | select localpath
-}
 
 Function Get-LoggedOnUser{
 <#
@@ -387,9 +374,194 @@ function Test-Port {
   $socket = $null
 }
 
+
+
+
 function Get-LogonServer{
 [System.Environment]::GetEnvironmentVariable("logonserver")
 }
 
-write-host -foregroundcolor Green "Module has been imported.  To view a list of available commands type 'Show-ModuleHelp'"
+
+
+
+
+function Get-DOS 
+{
+$days = New-TimeSpan -Start (Get-Date) -End (Get-Date 18-Mar-2018)
+Write-Host -ForegroundColor Green $days.days "days until you separate!"
+}
+
+
+
+
+
+function Look-Busy {
+
+    Function Rand_wait{
+    param($speed)
+        Switch ($speed){
+            "Fast"{
+                $Rand = Get-Random -Maximum 3 -Minimum 1
+            }
+            "Med"{
+                $Rand = Get-Random -Maximum 7 -Minimum 5
+            }
+            "Slow"{
+                $Rand = Get-Random -Maximum 15 -Minimum 7
+            }
+            Default{
+                $Rand = Get-Random -Maximum 5 -Minimum 1
+         }
+    }
+        Start-Sleep -Seconds $Rand
+    }
+
+    Function Results {
+        $Number = Get-Random -Minimum 100 -Maximum 100000
+        $Math = $Number%2
+        if ($Math -eq 1){
+            Write-host "Pass" -ForegroundColor Green
+            return $true
+        }Else{
+            Write-host "Fail" -foregroundcolor red
+            return $false
+        }
+    }
+
+
+Cls
+While ($true){
+    $Rand = Get-Random -Minimum 3 -Maximum 5
+    $Array = @(
+        "Checking Tactical Value: ",
+        "Verifying Server Context: ",
+        "Activating Level $Rand scan: ",
+        "Initializing Mission Data: ",
+        "Obfuscating Adversary Data: "
+        "Verifying Replication on PDC: ",
+        "Activating IPSEC Policy:  "
+    )
+    $Choice = Get-Random -Minimum 0 -Maximum ($Array.count - 1)
+    Write-host $Array[$Choice] -nonewline -ForegroundColor White
+    Rand_wait
+    $Res = Results
+}
+}
+
+
+function Restore-DefaultColors
+<#
+.SYNOPSIS
+This function resets the ISE colors when other scripts/commands/or programs mess them up.
+#>
+    	{
+    	$psISE.Options.RestoreDefaults()
+    	}
+
+
+function Get-LocalAdmin 
+	{  
+	param ($ComputerName)  
+  
+	$admins = Gwmi win32_groupuser –computer $ComputerName   
+	$admins = $admins |? {$_.groupcomponent –like '*"Administrators"'}  
+  
+	$admins |% {  
+	$_.partcomponent –match “.+Domain\=(.+)\,Name\=(.+)$” > $nul  
+	$matches[1].trim('"') + “\” + $matches[2].trim('"')  
+	}  
+	}
+
+
+function Get-NameField {
+    # function that attempts to extract the appropriate field name
+    # from various passed objects. This is so functions can have
+    # multiple types of objects passed on the pipeline.
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$True,ValueFromPipeline=$True)]
+        $Object
+    )
+    process {
+        if($Object) {
+            if ( [bool]($Object.PSobject.Properties.name -match "dnshostname") ) {
+                # objects from Get-NetComputer
+                $Object.dnshostname
+            }
+            elseif ( [bool]($Object.PSobject.Properties.name -match "name") ) {
+                # objects from Get-NetDomainController
+                $Object.name
+            }
+            else {
+                # strings and catch alls
+                $Object
+            }
+        }
+        else {
+            return $Null
+        }
+    }
+}
+
+
+function Get-LastLoggedOn {
+<#
+    .SYNOPSIS
+
+        This function uses remote registry functionality to return
+        the last user logged onto a target machine.
+
+        Note: This function requires administrative rights on the
+        machine you're enumerating.
+
+    .PARAMETER ComputerName
+
+        The hostname to query for the last logged on user.
+        Defaults to the localhost.
+
+    .EXAMPLE
+
+        PS C:\> Get-LastLoggedOn
+
+        Returns the last user logged onto the local machine.
+
+    .EXAMPLE
+        
+        PS C:\> Get-LastLoggedOn -ComputerName WINDOWS1
+
+        Returns the last user logged onto WINDOWS1
+#>
+
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline=$True)]
+        [String]
+        [Alias('HostName')]        
+        $ComputerName = "."
+    )
+
+    process {
+
+        # process multiple host object types from the pipeline
+        $ComputerName = Get-NameField -Object $ComputerName
+
+        # try to open up the remote registry key to grab the last logged on user
+        try {
+            $Reg = [WMIClass]"\\$ComputerName\root\default:stdRegProv"
+            $HKLM = 2147483650
+            $Key = "SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI"
+            $Value = "LastLoggedOnUser"
+            $Reg.GetStringValue($HKLM, $Key, $Value).sValue
+        }
+        catch {
+            Write-Warning "[!] Error opening remote registry on $ComputerName. Remote registry likely not enabled."
+            $Null
+        }
+    }
+}
+
+
+
+#write-host -foregroundcolor Green "Module has been imported.  To view a list of available commands type 'Show-ModuleHelp'"
+
 
