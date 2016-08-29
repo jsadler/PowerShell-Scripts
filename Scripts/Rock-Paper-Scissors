@@ -1,0 +1,45 @@
+while($PlayerInput -ne 'Quit'){
+$playerInput = Read-Host "Rock, Paper, or Scissors? Or 'Quit' to 
+
+exit"
+$cpuInput = Get-Random Rock, Paper, Scissors
+    #Tie
+If ($playerInput -eq "Rock" -and $cpuInput -eq "Rock"){
+    Write-Host "It's a tie!" 
+    [System.Console]::Beep(659, 125)
+    }
+If ($playerInput -eq "Scissors" -and $cpuInput -eq "Scissors"){
+    Write-Host "It's a tie!"
+    [System.Console]::Beep(523, 125)
+    }
+If ($playerInput -eq "Paper" -and $cpuInput -eq "Paper"){
+    Write-Host "It's a tie!" 
+    [system.console]::Beep(330, 400)
+    }
+    #Win
+If ($playerInput -eq "Rock" -and $cpuInput -eq "Scissors"){ 
+    Write-host "You win!"
+    [system.console]::Beep(450, 760)
+    }
+If ($playerInput -eq "Scissors" -and $cpuInput -eq "Paper"){
+    Write-Host "You win!"
+    [system.console]::Beep(450, 65)
+    }
+If ($playerInput -eq "Paper" -and $cpuInput -eq "Rock"){
+    Write-host "You win!" 
+    [system.console]::Beep(250, 450)
+    }
+    #Loss
+If ($playerInput -eq "Rock" -and $cpuInput -eq "Paper"){
+    Write-Host "You suck"
+    [system.console]::Beep(980, 760)
+    }
+    If ($playerInput -eq "Paper" -and $cpuInput -eq "Scissors"){
+    Write-Host "You suck"
+    [system.console]::Beep(980, 760)
+    }
+    If ($playerInput -eq "Scissors" -and $cpuInput -eq "Rock"){
+    Write-Host "You suck"
+    [system.console]::Beep(980, 760)
+    }
+    }
