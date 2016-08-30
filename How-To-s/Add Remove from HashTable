@@ -1,0 +1,10 @@
+$hash = $null
+$hash = @{}
+$proc = Get-Process | sort-object -Property name -Unique
+
+foreach ($p in $proc)
+{
+$hash.add($p.name,$p.Id)
+}
+
+$hash
