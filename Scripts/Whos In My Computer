@@ -4,14 +4,17 @@ Who's in my computer?
 .SYNOPSIS
     Script checks the newest 100 events from the 'Security' log and alerts you when some besides you connects to your machine
 
+.DETAILS
+    Edit "YourUserNameHere" with your own username
 
 Created by Joe Sadler    
+
 
 #>
 
 while($true){
 $eventList = @()
-Get-EventLog "Security" -Newest 100 | Where {$_.EventID -eq 4624 -and $_.ReplacementStrings[4].Length -gt 10 -and $_.ReplacementStrings[5] -notlike "*$" -and $_.ReplacementStrings[5] -notlike "1386764600*"} `
+Get-EventLog "Security" -Newest 100 | Where {$_.EventID -eq 4624 -and $_.ReplacementStrings[4].Length -gt 10 -and $_.ReplacementStrings[5] -notlike "*$" -and $_.ReplacementStrings[5] -notlike "YourUserNameHere*"} `
     | foreach-Object {
         $row = "" | Select UserName, LoginTime
         $row.UserName = $_.ReplacementStrings[5]
