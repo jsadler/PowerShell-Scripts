@@ -1,0 +1,59 @@
+<#
+Pull Installed Software
+
+.SYNOPSIS
+    Script that shows software installed on a machine or machines.
+.DETAILS
+    Script queries the WMI class win32_product to pull a list of installed software
+
+
+Text file should have only computer names without comma's or trailing spaces
+.EXAMPLE
+    machine1
+    machine2
+    machine3
+    etc
+#>
+
+#Put the file path to your text file here
+$Computers = get-content C:\.your\file\here.txt
+
+
+
+$i=0
+Foreach ($computer in $computers)
+{
+$i++
+write-progress -Activity "Querying installed software on $computer.." -Status "Status.." -PercentComplete (($i/$computers.count)*100)
+
+if (test-connection -computername $computer -count 1)
+    {
+
+        Try
+        {
+            $stuff = Get-WmiObject -Class win32_product -ComputerName $computer
+                foreach ($thing in $stuff){
+                
+                    New-Object PSObject -Property @{
+                    "Computer Name" = $thing.PSComputerName
+                    "Software Name" = $thing.Name
+                    "Version" = $thing.version
+                    "Vendor" = $thing.vendor
+                                                   }
+                                          }
+         }
+
+        Catch
+        {
+            Write-Error $_
+        }
+
+    }
+
+else
+{
+    Write-Host -ForegroundColor Red "Could not connect to $computer"
+}
+
+
+}
