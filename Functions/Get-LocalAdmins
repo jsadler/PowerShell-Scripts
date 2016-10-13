@@ -1,0 +1,60 @@
+Function Get-LocalAdmins 
+<#
+
+.SYNOPSIS
+    Pull local admins on a machine
+
+.DESCRIPTION
+    Uses ADSI to pull local admins from a machine.  If you get issues using the function try using the -UseWMI switch
+    to use the WMI instead of ADSI.  (Warning:  Much Slower)
+
+.EXAMPLE
+    Get-LocalAdmins -ComputerName Workstation1
+
+.EXAMPLE
+    Get-LocalAdmins Workstation1 -UseWMI
+
+#>
+
+{
+    Param(
+             [parameter(Mandatory=$true,
+             Position=0)]
+             $ComputerName,
+
+             [parameter(Mandatory=$false)]
+             [switch]
+             $UseWMI
+         )
+
+###########################################################
+#Pull Local Admins using WMI if $UseWMI Switch Selected
+#######################################################
+    If ($UseWMI)
+	{  
+	    $admins = Gwmi win32_groupuser –computer $ComputerName   
+	    $admins = $admins |? {$_.groupcomponent –like '*"Administrators"'}  
+  
+	    $admins |% {  
+	    $_.partcomponent –match “.+Domain\=(.+)\,Name\=(.+)$” > $null  
+	    $matches[1].trim('"') + “\” + $matches[2].trim('"')  
+	               }  
+	}
+
+    Else
+    {
+###########################################################
+#Main
+#######################################################
+        Try
+        {
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock {
+            ([ADSI]”WinNT://$env:COMPUTERNAME/Administrators”).invoke(“Members”) | foreach {$_.getType().InvokeMember(“ADSPath”,”GetProperty”,$null,$_,$null)}
+            }
+        }
+        Catch
+        {
+            $Host.UI.WriteErrorLine("[+] ERROR: Unable to connect to $computername")
+        }
+    }
+}
