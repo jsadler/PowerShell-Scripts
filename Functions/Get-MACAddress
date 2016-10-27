@@ -1,52 +1,12 @@
-<#
+Function Get-MAC {
 
-    .SYNOPSIS 
-      
-      Outputs the MAC Address of the selected computer/server
+Param(
+        [Parameter(Mandatory=$True,
+         Position=0)]
+        [string]
+        $ComputerName
+     )
 
-    .DESCRIPTION
+getmac /s $ComputerName
 
-      The Get-MACAddress function utilizes Get-WMIObject to pull the 
-      NetworkAdapterConfiguration of a remote computer where IPEnabled is equal to true.
-      It then selects the PSComputerName and MACAddress properties and outputs them to the screen.
-
-    .PARAMETER computer
-
-      (required) Will display the MAC Address of the entered computer
-
-    .EXAMPLE
-    
-      Display the MAC Address of Our-DC-001v
-    
-      Get-MACAddress -computer "Our-DC-001v"
-
-#>
-
-function Get-MACAddress{
-    [CmdletBinding(SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
-Param
-    (
-        # Enter a computer/server name
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
-        [Alias("i")]
-        $Identity
-    ) 
-    $correct = $false
-    try{
-        Get-ADComputer $identity | Out-Null
-        $correct = $true
-        }
-    catch{Write-Host -ForegroundColor Red "$identity does not exist"}
-    if($correct -eq $true){
-        Get-WmiObject "Win32_NetworkAdapterConfiguration" -ComputerName "$identity" -Filter "IpEnabled = TRUE" | ft PSComputerName,MACAddress -AutoSize
-        }    
-
-    }
+}
