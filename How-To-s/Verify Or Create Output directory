@@ -1,0 +1,30 @@
+##########################
+##Verify/Create Output Directory
+$OutputDir = Read-Host "Enter the Directory that you want to store the output in (Ex. C:\logs)"
+Write-Host ""
+Write-Host "Verifying $OutputDir exists: " -NoNewline -ForegroundColor Gray
+    If (Test-Path -Path $OutputDir)
+    {
+        Write-Host -ForegroundColor Green "Done!"
+    }
+    Else
+    {
+        Try{
+            Write-Host -ForegroundColor Red "Path did not exist."
+            Write-host "Creating $OutputDir now: " -NoNewline -ForegroundColor Gray
+            New-Item -Path $OutputDir -ItemType Directory | Out-Null
+                If(Test-Path $OutputDir)
+                {
+                    Write-Host -ForegroundColor Green "Done!"
+                }
+                Else
+                {
+                Write-Host -ForegroundColor Red "Unable to verify output directory was created.  Please try a different directory"
+                Break
+                }
+            }
+        catch
+        {
+            Write-Error $_
+        }
+    }
