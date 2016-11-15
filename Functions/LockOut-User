@@ -1,0 +1,52 @@
+function LockOut-User 
+<#
+.SYNOPSIS
+    Locks out a specified user account
+
+.DESCRIPTION
+    Locks out a user account by using incorrect password attempts until account is locked.
+    This assumes 'Default Domain Policy' GPO has a incorrect password counter setup.  Most
+    networks do.
+
+.EXAMPLE
+    LockOut-User -ShittyUser JohnSmith
+
+.EXAMPLE 
+    LockOut-User -ShittyUser JohnSmith -ComputerName Workstation01
+
+
+.PARAMETER (Mandatory) ShittyUser
+    This is the username of the individual you want to lockout
+
+.PARAMETER (Optional) ComputerName
+    This is the machine that will lockout their account and show a lockout in the eventlogs.
+    If you don't use this parameter it defaults to the machine you're running the function on.
+#>
+
+
+{
+Param(
+    [parameter(Mandatory=$True,Position=0)]
+    $ShittyUser,
+    [parameter(Mandatory=$False,Position=1)]
+    $ComputerName=$env:COMPUTERNAME
+)
+
+
+$Password = ConvertTo-SecureString 'NotMyPassword' -AsPlainText -Force
+
+
+    Get-ADUser $ShittyUser -Properties SamAccountName, UserPrincipalName, LockedOut |
+        ForEach-Object {
+ 
+            Do {
+ 
+                Invoke-Command -ComputerName $ComputerName {Get-Process
+                } -Credential (New-Object System.Management.Automation.PSCredential ($($_.UserPrincipalName), $Password)) -ErrorAction SilentlyContinue
+ 
+            }
+            Until ((Get-ADUser -Identity $_.SamAccountName -Properties LockedOut).LockedOut)
+ 
+            Write-Output "$($_.SamAccountName) has been locked out"
+        }
+}
