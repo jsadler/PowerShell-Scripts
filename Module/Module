@@ -1,18 +1,5 @@
 ##############################################################
 ##############################################################
-##                                                          ##
-##      This is a module that contains all of the           ##
-##      Functions listed in the functions folder            ##
-##      on https://github.com/jsadler/PowerShell-Scripts    ##
-##                                                          ##                   
-##      To use module:                                      ##
-##        -copy the raw text here to a                      ##
-##        text file.                                        ##
-##        -Name it whatever you want                        ##
-##        -Place text file in PowerShell module folder      ##
-##        -Within PowerShell/ISE run 'Import-Module         ##
-##        ModuleName'                                       ##
-##                                                          ##
 ##    Version Control:                                      ##
 ##      5 April 2016 - Created module, added eleven         ##
 ##      functions.                                          ##
@@ -24,35 +11,9 @@
 ##	DefaultColors					    ##
 ##	29 August 2016 - Added Get-Namefield/Get-           ##
 ##	LastLoggedOn                                        ##
-##                                  Compiled by Joe Sadler  ##
+##                                                          ##
 ##############################################################
 ##############################################################
-
-Function Show-ModuleHelp{
-$table = @(
-""
-"`nGet-IPRange"
-"`nGet-InstalledSoftware"
-"`nGet-LoggedOnUser"
-"`nGet-MACAddress"
-"`nGet-Uptime"
-"`nGet-UserProfiles"
-"`nHide-PowerShell & Show-PowerShell"
-"`nOpen-DiscTray"
-"`nAdd-PressEnter"
-"`nTest-Port"
-"`nGet-LogonServer"
-"`nGet-DOS"
-"`nLook-Busy"
-"`nRestore-DefaultColors"
-"`nGet-LocalAdmin"
-"`nGet-NameField"
-"`nGet-LastLoggedOn"
-)
-write-host $table -foregroundcolor green
-}
-
-
 
 function Get-IPrange
 {
@@ -559,9 +520,3 @@ function Get-LastLoggedOn {
         }
     }
 }
-
-
-
-#write-host -foregroundcolor Green "Module has been imported.  To view a list of available commands type 'Show-ModuleHelp'"
-
-
