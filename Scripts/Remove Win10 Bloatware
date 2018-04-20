@@ -1,0 +1,12 @@
+$packages = DISM /Online /Get-ProvisionedAppxPackages | select-string Packagename
+$t = 0
+
+foreach ($i in $packages){
+    $t++
+    $x = $i.ToString()
+    $y = $x.Split("")[-1]
+    $y.split()[-1]
+    Write-Progress -Activity "Removing $y.." -Status "Status.." -percentcomplete (($t / $packages.count)*100)
+    
+    DISM /Online /Remove-ProvisionedAppxPackage /PackageName:$y
+}
