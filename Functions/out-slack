@@ -4,7 +4,7 @@
 .DESCRIPTION
    Uses incoming web hook Slack app to send message to slack. Defaults to private testchannel at private URL.
    Default icon is pizza, name is "Pizza Bot." Running with no parameters sends a test message to current
-   defaults.
+   defaults. Requires incoming web hook configured within Slack workspace before use.
 .EXAMPLE
    Out-Slack -SlackChannelUri -ChannelName -Message
 .EXAMPLE
@@ -20,7 +20,7 @@ function Out-Slack
         # Slack Channel URL
         [Parameter(ValueFromPipelineByPropertyName=$false,
                    Position=0)]
-        $SlackChannelUri= "https://hooks.slack.com/services/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",
+        $SlackChannelUri= "https://hooks.slack.com/services/etc/etc/etc.",
 
 
         # Slack Channel Name
@@ -34,11 +34,6 @@ function Out-Slack
                    Position=2)]
         $Message="test message"
     )
-
-
-#$SlackChannelUri = "https://hooks.slack.com/services/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"
-#$ChannelName = "#testchannel1"
-#$Message = "Your script has finished running!"
  
 $BodyTemplate = @"
     {
