@@ -1,0 +1,55 @@
+<#
+.Synopsis
+   Output message to Slack
+.DESCRIPTION
+   Uses incoming web hook Slack app to send message to slack. Defaults to private testchannel at private URL.
+   Default icon is pizza, name is "Pizza Bot." Running with no parameters sends a test message to current
+   defaults.
+.EXAMPLE
+   Out-Slack -SlackChannelUri -ChannelName -Message
+.EXAMPLE
+   Out-Slack
+#>
+function Out-Slack
+{
+    [CmdletBinding()]
+    [Alias()]
+    [OutputType([int])]
+    Param
+    (
+        # Slack Channel URL
+        [Parameter(ValueFromPipelineByPropertyName=$false,
+                   Position=0)]
+        $SlackChannelUri= "https://hooks.slack.com/services/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",
+
+
+        # Slack Channel Name
+        [Parameter(ValueFromPipelineByPropertyName=$false,
+                   Position=1)]
+        $ChannelName="testchannel1",
+
+
+        # Message
+        [Parameter(ValueFromPipelineByPropertyName=$true,
+                   Position=2)]
+        $Message="test message"
+    )
+
+
+#$SlackChannelUri = "https://hooks.slack.com/services/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"
+#$ChannelName = "#testchannel1"
+#$Message = "Your script has finished running!"
+ 
+$BodyTemplate = @"
+    {
+        "channel": "testchannel1",
+        "username": "Pizza Bot",
+        "text": "Message \nTime: DATETIME.",
+        "icon_emoji":":pizza:"
+    }
+"@
+ 
+$body = $BodyTemplate.Replace("Message",$Message).Replace("DATETIME",$(Get-Date)).Replace("CHANNELNAME","$ChannelName")
+Invoke-RestMethod -uri $SlackChannelUri -Method Post -body $body -ContentType 'application/json'
+
+}
