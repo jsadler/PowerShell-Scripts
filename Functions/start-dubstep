@@ -1,0 +1,49 @@
+function start-dubstep{
+
+[System.Console]::Beep(40,500)
+[System.Console]::Beep(40,500)
+[System.Console]::Beep(40,500)
+[System.Console]::Beep(40,500)
+
+[System.Console]::Beep(50,500)
+[System.Console]::Beep(50,500)
+[System.Console]::Beep(50,500)
+[System.Console]::Beep(50,500)
+
+[System.Console]::Beep(37,500)
+[System.Console]::Beep(37,500)
+[System.Console]::Beep(37,500)
+[System.Console]::Beep(37,500)
+
+[System.Console]::Beep(50,500)
+[System.Console]::Beep(50,500)
+[System.Console]::Beep(50,500)
+[System.Console]::Beep(50,500)
+
+$words = "Yeah, fucking remix 2021 bitch"
+add-type -AssemblyName system.speech
+$say = New-Object -TypeName system.speech.synthesis.speechsynthesizer
+$say.speak($words)
+
+
+[System.Console]::Beep(40,500)
+[System.Console]::Beep(50,500)
+[System.Console]::Beep(37,500)
+[System.Console]::Beep(50,500)
+[System.Console]::Beep(40,500)
+[System.Console]::Beep(50,500)
+[System.Console]::Beep(37,500)
+[System.Console]::Beep(50,500)
+
+[System.Console]::Beep(40,500)
+[System.Console]::Beep(100,500)
+[System.Console]::Beep(80,500)
+[System.Console]::Beep(90,500)
+[System.Console]::Beep(80,500)
+[System.Console]::Beep(80,500)
+[System.Console]::Beep(100,500)
+[System.Console]::Beep(100,500)
+[System.Console]::Beep(40,500)
+[System.Console]::Beep(40,500)
+[System.Console]::Beep(40,500)
+}
